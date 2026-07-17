@@ -1,0 +1,37 @@
+package com.StudentFeeManagement.dto;
+
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.Data;
+
+@Data
+public class StudentDTO {
+
+	@NotBlank(message = "Student name is required")
+	private String name;
+
+	@Email(message = "Enter valid email")
+	@NotBlank(message = "Email is required")
+	private String email;
+
+	@NotBlank(message = "Password is required")
+	private String password;
+
+	@Pattern(regexp = "^[6-9][0-9]{9}$", message = "Enter valid mobile number")
+	private String mobile;
+
+	@NotBlank(message = "Address is required")
+	private String address;
+
+	// Optional fields
+	private LocalDate dob;
+
+	private String gender;
+
+	@NotNull(message = "Course ID is required")
+	private Integer courseId;
+}

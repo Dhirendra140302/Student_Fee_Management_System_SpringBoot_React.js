@@ -1,0 +1,49 @@
+package com.StudentFeeManagement.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.StudentFeeManagement.dao.AdminDAO;
+import com.StudentFeeManagement.dao.StudentDAO;
+import com.StudentFeeManagement.dto.LoginDTO;
+import com.StudentFeeManagement.entity.Admin;
+import com.StudentFeeManagement.entity.Student;
+import com.StudentFeeManagement.exception.InvalidCredentialsException;
+
+@Service
+public class AuthService {
+
+	@Autowired
+	private AdminDAO adminDAO;
+
+	@Autowired
+	private StudentDAO studentDAO;
+
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
+	// Admin login — validate credentials and return the authenticated admin
+	public Admin adminLogin(LoginDTO dto) {
+		Admin admin = adminDAO.findByEmail(dto.getEmail())
+				.orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+		if (!passwordEncoder.matches(dto.getPassword(), admin.getPassword())) {
+			throw new InvalidCredentialsException("Invalid email or password");
+		}
+
+		return admin;
+	}
+
+	// Student login — validate credentials and return the authenticated student
+	public Student studentLogin(LoginDTO dto) {
+		Student student = studentDAO.findByEmail(dto.getEmail())
+				.orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+		if (!passwordEncoder.matches(dto.getPassword(), student.getPassword())) {
+			throw new InvalidCredentialsException("Invalid email or password");
+		}
+
+		return student;
+	}
+}

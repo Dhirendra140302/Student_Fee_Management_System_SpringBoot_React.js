@@ -1,0 +1,45 @@
+package com.StudentFeeManagement.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "courses")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Course {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+
+	@NotBlank(message = "Course name is required")
+	@Column(nullable = false, unique = true)
+	private String courseName;
+
+	@NotBlank(message = "Duration is required")
+	@Column(nullable = false)
+	private String duration;
+
+	@Positive(message = "Course fee must be greater than zero")
+	@Column(nullable = false)
+	private Double fees;
+
+	@Column(length = 1000)
+	private String description;
+
+	// Suppress the back-reference to avoid Course -> Student -> Course -> ... loop
+	@JsonIgnoreProperties("course")
+	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Student> students = new ArrayList<>();
+}

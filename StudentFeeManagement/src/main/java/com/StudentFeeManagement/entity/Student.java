@@ -1,0 +1,63 @@
+package com.StudentFeeManagement.entity;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "students")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Student {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+
+	@NotBlank(message = "Student name is required")
+	@Column(nullable = false)
+	private String name;
+
+	@Email(message = "Enter valid email")
+	@Column(nullable = false, unique = true)
+	private String email;
+
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	@Column(nullable = false)
+	private String password;
+
+	@Pattern(regexp = "^[6-9][0-9]{9}$", message = "Enter valid mobile number")
+	@Column(nullable = false, unique = true)
+	private String mobile;
+
+	@NotBlank(message = "Address is required")
+	@Column(nullable = false)
+	private String address;
+
+	@Column(nullable = true)
+	private LocalDate dob;
+
+	@Column(nullable = true)
+	private String gender;
+
+	@JsonIgnoreProperties("students")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "course_id", nullable = false)
+	private Course course;
+
+	@JsonIgnoreProperties("student")
+	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Fee> fees = new ArrayList<>();
+}
